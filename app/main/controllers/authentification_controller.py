@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, Body, HTTPException, Query, File
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 from starlette.requests import Request
-from app.main.core.mail import send_reset_password_option2_email, send_account_confirmation_email
+from app.main.core.mail import send_reset_password_option2_email
 from app.main.core.dependencies import get_db, TokenRequired
 from app.main import schemas, crud, models
 from app.main.core.i18n import __
