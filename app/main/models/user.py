@@ -14,6 +14,7 @@ class UserRole(str, Enum):
     EDIMESTRE = "EDIMESTRE"
     SUPER_ADMIN = "SUPER_ADMIN"
     OWNER = "OWNER"
+    CUSTOMER = "CUSTOMER"
     
 
 class UserStatus(str, Enum):

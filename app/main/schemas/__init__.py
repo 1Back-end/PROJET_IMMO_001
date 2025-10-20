@@ -10,3 +10,4 @@ from .reservation import *
 from .products import *
 from .payments import *
 from .contrats import *
+from .customers import *

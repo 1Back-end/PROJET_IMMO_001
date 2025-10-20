@@ -10,6 +10,7 @@ class Product(BaseModel):
     price:str
     mode:str
     position:str
+    image_uuid:list[str] = None
 
 
 class ProductCreate(Product):
@@ -23,6 +24,7 @@ class ProductUpdate(BaseModel):
     price:Optional[str]
     mode:Optional[str]
     position:Optional[str]
+    image_uuid:Optional[list[str]] = None
 
 class ProductResponse(BaseModel):
     code:str
@@ -31,6 +33,7 @@ class ProductResponse(BaseModel):
     price:str
     mode:str
     position:str
+    image_uuid:list[str] = None
     owner:AddedBy
 
 model_config = ConfigDict(from_attributes=True)
