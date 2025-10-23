@@ -1,6 +1,6 @@
 from datetime import date
 import math
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional, Union, List
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
 # from app.main.crud.base import CRUDBase
@@ -12,7 +12,7 @@ from app.main.utils.file import FileUtils
 # from app.main.utils.qrcode import CreateQrcode
 from app.main.models.storage import Storage
 from app.main.schemas.file import FileList, StorageCreate
-
+from app.main import models,schemas
 
 
 def store_file(db: Session, file_data: StorageCreate) -> Storage:
@@ -22,6 +22,12 @@ def store_file(db: Session, file_data: StorageCreate) -> Storage:
         db.commit()
         db.refresh(db_file)
         return db_file
+
+
+
+def get_by_uuids(db: Session, uuids: List[str]):
+        return db.query(models.Storage).filter(
+            models.Storage.uuid.in_(uuids)).all()
 
 def get_file_by_public_id(db: Session, public_id: str) -> Storage:
         """Retrieve file metadata by public_id."""
@@ -75,5 +81,7 @@ def get_files(
             current_page=page,
             data=query,
         )
+
+
 
 

@@ -9,3 +9,4 @@ from .messages import *
 from .reservation import *
 from .contrats import *
 from .payments import *
+from .validation_account import *

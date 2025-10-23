@@ -3,7 +3,17 @@ from pydantic import BaseModel,EmailStr,ConfigDict
 from typing import Optional
 from app.main.models.user import UserRole
 from app.main.schemas.file import FileSlim2
- 
+
+
+class UserReservation(BaseModel):
+    uuid: str
+    first_name: str
+    last_name: str
+    phone_number: Optional[str] = None
+    model_config = ConfigDict(from_attributes=True)
+
+
+
 class AddedBy(BaseModel):
     uuid: str
     email: str

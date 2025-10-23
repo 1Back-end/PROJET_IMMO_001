@@ -37,7 +37,11 @@ class Product(Base):
     owner_uuid = Column(String, ForeignKey("users.uuid"), nullable=False, index=True)
     owner = relationship("User", foreign_keys=[owner_uuid])
 
-    images = relationship("ProductImage", back_populates="products", cascade="all, delete-orphan")
+    images = relationship(
+        "ProductImage",
+        back_populates="product",
+        cascade="all, delete-orphan"
+    )
 
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
@@ -57,7 +61,7 @@ class ProductImage(Base):
     owner = relationship("User",foreign_keys=[owner_uuid])
 
     image_uuid = Column(String, ForeignKey("storages.uuid"), nullable=False, index=True)
-    image = relationship("Storage", foreign_keys=[image_uuid])
+    image  = relationship("Storage", foreign_keys=[image_uuid])
 
     is_deleted = Column(Boolean, nullable=False, default=False)
 
