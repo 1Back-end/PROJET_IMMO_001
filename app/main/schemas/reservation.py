@@ -38,3 +38,15 @@ class ReservationResponseList(BaseModel):
     data: list[ReservationResponse]
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class ReservationDelete(BaseModel):
+    uuid: str
+
+
+
+class ReservationUpdateStatus(BaseModel):
+    uuid: str
+    status: str
+
+

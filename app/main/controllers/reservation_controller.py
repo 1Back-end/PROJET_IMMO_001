@@ -39,6 +39,7 @@ def get(
     order_field: Optional[str] = None,
     keyword: Optional[str] = None,
     status: Optional[str] = Query(None, enum=[st.value for st in models.ReservationStatus]),
+    current_user: models.User = Depends(TokenRequired(roles=["CUSTOMER"]))
 ):
     return crud.reservations.get_all_reservation(
         db,
@@ -50,3 +51,51 @@ def get(
         status,
     )
 
+
+@router.delete("/delete", response_model=schemas.Msg)
+async def delete_reservation(
+        *,
+        db: Session = Depends(get_db),
+        obj_in : schemas.ReservationDelete,
+        current_user: models.User = Depends(TokenRequired(roles=["CUSTOMER"]))
+):
+    crud.reservations.delete(db=db,uuid=obj_in.uuid)
+    return schemas.Msg(message=__(key="reservation-delete-successfully"))
+
+@router.put("/soft_delete", response_model=schemas.Msg)
+async def soft_delete_reservation(
+        *,
+        db: Session = Depends(get_db),
+        obj_in : schemas.ReservationDelete,
+        current_user: models.User = Depends(TokenRequired(roles=["CUSTOMER"]))
+):
+    crud.reservations.soft_delete(db=db,uuid=obj_in.uuid)
+    return schemas.Msg(message=__(key="reservation-delete-successfully"))
+
+@router.put("/update_status", response_model=schemas.Msg)
+async def update_status(
+        *,
+        db: Session = Depends(get_db),
+        obj_in : schemas.ReservationUpdateStatus,
+        current_user: models.User = Depends(TokenRequired(roles=["CUSTOMER"]))
+):
+    if obj_in.status not in [models.ReservationStatus.approved, models.ReservationStatus.cancelled, models.ReservationStatus.pending, models.ReservationStatus.rejected]:
+        raise HTTPException(status_code=400, detail=__(key="invalid-status"))
+    crud.reservations.update_status(
+        db=db,
+        uuid=obj_in.uuid,
+        status=obj_in.status
+    )
+    return schemas.Msg(message=__(key="reservation-update-successfully"))
+
+@router.get("/get_by_uuid", response_model=schemas.Msg)
+async def get_by_uuid(
+        *,
+        db: Session = Depends(get_db),
+        uuid: str,
+        current_user: models.User = Depends(TokenRequired(roles=["CUSTOMER"]))
+):
+    data = crud.reservations.get_by_uuid(db=db, uuid=uuid)
+    if not data:
+        raise HTTPException(status_code=404, detail=__(key="reservation-not-found"))
+    return data
