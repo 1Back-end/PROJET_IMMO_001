@@ -8,95 +8,99 @@ from app.main.core.i18n import __
 from app.main.core.config import Config
 from app.main.core.dependencies import TokenRequired
 
-router = APIRouter(prefix="/payments", tags=["payments"])
+router = APIRouter(prefix="/contrats", tags=["contrats"])
 
 @router.post("/create",response_model=schemas.Msg,status_code=201)
-async def create_payment(
+async def create_contrat(
     *,
     db: Session = Depends(get_db),
-    obj_in:schemas.PaymentCreate,
+    obj_in:schemas.ContratCreate,
     current_user: models.User = Depends(TokenRequired(roles=["SUPER_ADMIN","ADMIN"]))
 ):
         
-    exist_uuid = crud.payment.get_by_uuid(db=db,uuid=obj_in.uuid)
+    exist_uuid = crud.contrat.get_by_uuid(db=db,uuid=obj_in.uuid)
     if exist_uuid:
-        raise HTTPException(status_code=409, detail=__(key="payment-already-exist"))
+        raise HTTPException(status_code=409, detail=__(key="contrats-already-exist"))
     
-    exist_code = crud.payment.get_by_code(db=db,code=obj_in.code)
-    if exist_code:
-        raise HTTPException(status_code=409, detail=__(key="payment-already-exist"))
+    exist_title = crud.contrats.get_by_title(db=db,title=obj_in.title)
+    if exist_title:
+        raise HTTPException(status_code=409, detail=__(key="contrats-already-exist"))
     
-    crud.payment.create(
+    product = crud.contrat.get_by_uuid(db=db,uuid=obj_in.product_uuid)
+    if not product:
+        raise HTTPException(status_code=404, detail=__(key="product-not-found"))
+    
+    crud.contrat.create(
         db=db,
         obj_in=obj_in,
         added_by=current_user.uuid
     )
-    return schemas.Msg(message=__(key="payment-create-successfully"))
+    return schemas.Msg(message=__(key="contrats-create-successfully"))
 
 
 @router.put("/update",response_model=schemas.Msg,status_code=200)
-async def update_payment(
+async def update_contrat(
     *,
     db: Session = Depends(get_db),
-    obj_in:schemas.PaymentUpdate,
+    obj_in:schemas.ProductUpdate,
      current_user: models.User = Depends(TokenRequired(roles=["SUPER_ADMIN","ADMIN"]))
 ):
     
-    exist_uuid = crud.payment.uuid(db=db,uuid=obj_in.uuid)
+    exist_uuid = crud.contrat.uuid(db=db,uuid=obj_in.uuid)
     if exist_uuid:
         raise HTTPException(status_code=409, detail=__(key="uuid-already-exist"))
     
-    exist_code = crud.product.code(db=db,code=obj_in.code)
-    if exist_code:
-        raise HTTPException(status_code=409, detail=__(key="code-already-exist"))
+    exist_title = crud.contrat.get_by_title(db=db,title=obj_in.title)
+    if exist_title:
+        raise HTTPException(status_code=409, detail=__(key="title-already-exist"))
     
-    crud.payment.update(
+    crud.contrat.update(
         db=db,
         obj_in=obj_in,
         added_by=current_user.uuid
     )
-    return schemas.Msg(message=__(key="payment-update-successfully"))
+    return schemas.Msg(message=__(key="contrat-update-successfully"))
 
 
 @router.put("/update_status",response_model=schemas.Msg)
-async def update_payment_status(
+async def update_contrat_status(
     *,
     db: Session = Depends(get_db),
-    obj_in:schemas.PaymentUpdateStatus,
+    obj_in:schemas.ContratUpdateStatus,
     current_user: models.User = Depends(TokenRequired(roles=["SUPER_ADMIN","ADMIN"]))
 ):
-    crud.payment.update_status(
+    crud.contrat.update_status(
         db=db,
         uuid=obj_in.uuid,
         is_active=obj_in.is_active
     )
-    return schemas.Msg(message=__(key="payment-update-successfully"))
+    return schemas.Msg(message=__(key="contrat-update-successfully"))
 
 @router.delete("/delete",response_model=schemas.Msg,status_code=200)
 async def delete_product(
     *,
     db: Session = Depends(get_db),
-    obj_in:schemas.PaymentDelete,
+    obj_in:schemas.ContratDelete,
     current_user: models.User = Depends(TokenRequired(roles=["SUPER_ADMIN","ADMIN"]))
     
 ):
-    crud.payment.delete(
+    crud.contrat.delete(
         db=db,
         uuid=obj_in.uuid
     )
-    return schemas.Msg(message=__(key="payment-deleted-successfully"))
+    return schemas.Msg(message=__(key="contrat-deleted-successfully"))
 
 
 @router.put("/soft_delete",response_model=schemas.Msg,status_code=200)
-async def soft_delete_payment(
+async def soft_delete_contrat(
     *,
     db: Session = Depends(get_db),
-    obj_in:schemas.PaymentDelete,
+    obj_in:schemas.ContratDelete,
     current_user: models.User = Depends(TokenRequired(roles=["SUPER_ADMIN","ADMIN"]))
     
 ):
-    crud.product.soft_delete(db=db,uuid=obj_in.uuid)
-    return schemas.Msg(message=__(key="payment-deleted-successfully"))
+    crud.contrat.soft_delete(db=db,uuid=obj_in.uuid)
+    return schemas.Msg(message=__(key="contrat-deleted-successfully"))
 
 @router.get("/get_many", response_model = None)
 async def get(

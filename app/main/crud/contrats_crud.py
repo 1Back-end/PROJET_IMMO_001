@@ -83,3 +83,5 @@ class CRUDContrat(CRUDBase[models.Contrats,schemas.Contrat,schemas.ContratUpdate
             current_page = page,
             data = record_query
         )
+    
+contrats = ContratCRUD(models.Contrats)

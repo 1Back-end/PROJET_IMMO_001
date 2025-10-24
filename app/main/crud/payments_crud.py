@@ -85,3 +85,5 @@ class CRUDPayment(CRUDBase[models.Payment,schemas.Payment,schemas.PaymentUpdate]
             current_page = page,
             data = record_query
         )
+    
+payment = PaymentCRUD(models.Payment)

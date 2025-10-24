@@ -20,18 +20,18 @@ async def create_reservation(
         
     exist_uuid = crud.reservation.get_by_uuid(db=db,uuid=obj_in.uuid)
     if exist_uuid:
-        raise HTTPException(status_code=409, detail=(key="reservation-already-exist"))
+        raise HTTPException(status_code=409, detail=__(key="reservation-already-exist"))
     
     product = crud.product.get_by_uuid(db=db,uuid=obj_in.product_uuid)
     if not product:
-        raise HTTPException(status_code=404, detail=(key="product-not-found"))
+        raise HTTPException(status_code=404, detail=__(key="product-not-found"))
     
     crud.reservation.create(
         db=db,
         obj_in=obj_in,
         added_by=current_user.uuid
     )
-    return schemas.Msg(message=(key="reservation-create-successfully"))
+    return schemas.Msg(message=__(key="reservation-create-successfully"))
 
 
 @router.put("/update",response_model=schemas.Msg,status_code=200)
@@ -44,18 +44,18 @@ async def update_reservation(
     
     exist_uuid = crud.reservation.uuid(db=db,uuid=obj_in.uuid)
     if exist_uuid:
-        raise HTTPException(status_code=409, detail=(key="uuid-already-exist"))
+        raise HTTPException(status_code=409, detail=__(key="uuid-already-exist"))
     
     product = crud.product.get_by_uuid(db=db,uuid=obj_in.product_uuid)
     if not product:
-        raise HTTPException(status_code=404, detail=(key="product-not-found"))
+        raise HTTPException(status_code=404, detail=__(key="product-not-found"))
     
     crud.reservation.update(
         db=db,
         obj_in=obj_in,
         added_by=current_user.uuid
     )
-    return schemas.Msg(message=(key="reservation-update-successfully"))
+    return schemas.Msg(message=__(key="reservation-update-successfully"))
 
 
 @router.put("/update_status",response_model=schemas.Msg)
@@ -70,7 +70,7 @@ async def update_reservation_status(
         uuid=obj_in.uuid,
         is_active=obj_in.is_active
     )
-    return schemas.Msg(message=(key="reservation-update-successfully"))
+    return schemas.Msg(message=__(key="reservation-update-successfully"))
 
 @router.delete("/delete",response_model=schemas.Msg,status_code=200)
 async def delete_Reservation(
@@ -84,7 +84,7 @@ async def delete_Reservation(
         db=db,
         uuid=obj_in.uuid
     )
-    return schemas.Msg(message=(key="reservation-deleted-successfully"))
+    return schemas.Msg(message=__(key="reservation-deleted-successfully"))
 
 
 @router.put("/soft_delete",response_model=schemas.Msg,status_code=200)
@@ -96,7 +96,7 @@ async def soft_delete_Reservation(
     
 ):
     crud.reservation.soft_delete(db=db,uuid=obj_in.uuid)
-    return schemas.Msg(message=(key="reservation-deleted-successfully"))
+    return schemas.Msg(message=__(key="reservation-deleted-successfully"))
 
 @router.get("/get_many", response_model = None)
 async def get(

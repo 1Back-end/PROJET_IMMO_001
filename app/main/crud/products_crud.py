@@ -89,3 +89,5 @@ class CRUDProduct(CRUDBase[models.Product,schemas.Product,schemas.ProductUpdate]
             current_page = page,
             data = record_query
         )
+    
+products = ProductCRUD(models.Product)
