@@ -31,8 +31,8 @@ async def create_customer(
         if exist_customer_phone_number_2:
             raise HTTPException(status_code=409,detail=__(key="customer-phone-number-2-already-exists"))
 
-    exist_user_email = crud.user.get_by_email(db=db,email=obj_in.email)
-    if exist_user_email:
+    existe_user_email = crud.user.get_by_email(db=db,email=obj_in.email)
+    if existe_user_email:
         raise HTTPException(status_code=409,detail=__(key="user-email-already-exists"))
 
     exist_user_phone_number = crud.user.get_by_phone_number(db=db,phone_number=obj_in.phone_number)

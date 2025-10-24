@@ -65,7 +65,7 @@ class CustomerCRUD(CRUDBase[models.Customer, schemas.CustomerCreate, schemas.Cus
         new_user = models.User(
             uuid = commun_uuid,
             first_name = obj_in.first_name,
-            email = obj_in.email,
+            email=obj_in.email,
             last_name = obj_in.last_name,
             phone_number = obj_in.phone_number,
             password_hash= get_password_hash(obj_in.password),
@@ -122,50 +122,53 @@ class CustomerCRUD(CRUDBase[models.Customer, schemas.CustomerCreate, schemas.Cus
 
         db.commit()
 
+
+
     @classmethod
     def delete(cls,db:Session,uuid:str):
-        obj_in  = cls.get_by_uuid(db=db,uuid=uuid)
-        if not obj_in:
+        db_obj = cls.get_by_uuid(db=db,uuid=uuid)
+        if not db_obj:
             raise HTTPException(status_code=404, detail=__(key="customer-not-found"))
-        db.delete(obj_in)
+        db.delete(db_obj)
         db.commit()
-
 
     @classmethod
     def soft_delete(cls,db:Session,uuid:str):
-        obj_in = cls.get_by_uuid(db=db,uuid=uuid)
-        if not obj_in:
+        db_obj = cls.get_by_uuid(db=db,uuid=uuid)
+        if not db_obj:
             raise HTTPException(status_code=404, detail=__(key="customer-not-found"))
-        obj_in.is_deleted = True
+        db_obj.is_deleted = True
         db.commit()
+
 
     @classmethod
     def update_status(cls,db:Session,uuid:str,status:str):
-        obj_in = cls.get_by_uuid(db=db,uuid=uuid)
-        if not obj_in:
+        db_obj = cls.get_by_uuid(db=db,uuid=uuid)
+        if not db_obj:
             raise HTTPException(status_code=404, detail=__(key="customer-not-found"))
-        obj_in.status = status
+        db_obj.status = status
         db.commit()
-     
+
     @classmethod
     def get_all_data(
-        cls,
-        *,
-        db: Session,
-        page: int = 1,
-        per_page: int = 30,
-        order: Optional[str] = None,
-        order_field: Optional[str] = None,
-        keyword: Optional[str] = None,
-        status: Optional[str] = None,
+            cls,
+            *,
+            db: Session,
+            page: int = 1,
+            per_page: int = 30,
+            order: Optional[str] = None,
+            order_field: Optional[str] = None,
+            keyword: Optional[str] = None,
+            status : Optional[str]=None,
+
     ):
         if page < 1:
             page = 1
-        
+
         record_query = db.query(models.Customer).filter(models.Customer.is_deleted == False)
 
         if keyword:
-            record_query = db.record_query.filter(
+            record_query = record_query.filter(
                 or_(
                     models.Customer.first_name.ilike(f'%{keyword}%'),
                     models.Customer.last_name.ilike(f'%{keyword}%'),
@@ -178,7 +181,7 @@ class CustomerCRUD(CRUDBase[models.Customer, schemas.CustomerCreate, schemas.Cus
         if status:
             record_query = record_query.filter(models.Customer.status == status)
 
-        if order and order_field and hasattr(models.Experience, order_field):
+        if order and order_field and hasattr(models.Customer, order_field):
             if order == "asc":
                 record_query = record_query.order_by(getattr(models.Customer, order_field).asc())
             else:
@@ -187,13 +190,17 @@ class CustomerCRUD(CRUDBase[models.Customer, schemas.CustomerCreate, schemas.Cus
         total = record_query.count()
         record_query = record_query.offset((page - 1) * per_page).limit(per_page).all()
 
-        return schemas.CustomerResponseList(
-            total = total,
-            pages = math.ceil(total / per_page),
-            per_page = per_page,
-            current_page = page,
-            data = record_query
+        return schemas.CustomerResponseResponseList(
+            total=total,
+            pages=math.ceil(total / per_page),
+            per_page=per_page,
+            current_page=page,
+            data=record_query
         )
-    
+
+
+
+
 
 customers = CustomerCRUD(models.Customer)
+

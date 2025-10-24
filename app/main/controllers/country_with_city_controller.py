@@ -16,6 +16,7 @@ router = APIRouter(prefix="/uploads_contry_with_city", tags=["uploads_contry_wit
 async def upload_country_city_file(
         file: UploadFile = File(...),
         db: Session = Depends(get_db),
+        #current_user: models.User = Depends(TokenRequired(roles=["SUPER_ADMIN","ADMIN"]))
 ):
     content = await file.read()
     decoded = content.decode("utf-8")
@@ -58,6 +59,7 @@ def get(
     db: Session = Depends(get_db),
     page: int = 1,
     per_page: int = 25,
+    #current_user: models.User = Depends(TokenRequired(roles=["SUPER_ADMIN","ADMIN","EDIMESTRE"]))
 ):
     return crud.country_with_city.get_many(
         db,

@@ -73,15 +73,17 @@ class CountryResponseListSlim(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+
+
 class CountrySlim1(BaseModel):
-    uuid:str
+    uuid: str
     name:str
     code:str
-
     model_config = ConfigDict(from_attributes=True)
 
-class CitySlim1(BaseModel):
-    uuid:str
-    name:str
 
+
+class CitySlim1(BaseModel):
+    uuid: str
+    name: str
     model_config = ConfigDict(from_attributes=True)

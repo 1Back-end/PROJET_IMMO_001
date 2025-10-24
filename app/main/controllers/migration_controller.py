@@ -2,7 +2,6 @@ import os
 import shutil
 import platform
 from dataclasses import dataclass
-
 from fastapi import APIRouter, Body, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import Column, String
@@ -87,58 +86,6 @@ async def create_database_tables(
 
         return {"message": "Les tables de base de données ont été créées avec succès"}
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@router.post("/create-duration-licence", response_model=schemas.Msg, status_code=201)
-async def create_licence_duration(
-    db: Session = Depends(dependencies.get_db),
-    admin_key: schemas.AdminKey = Body(...)
-):
-    check_user_access_key(admin_key)
-
-    try:
-        path = os.path.join(os.getcwd(), "app", "main", "templates", "default_data", "licence_duration.json")
-        with open(path, encoding='utf-8') as f:
-            durations = json.load(f)
-
-        for d in durations:
-            db_duration = models.LicenceDuration(
-                uuid=d["uuid"],
-                key=d["key"],
-                duration_days=d["duration_days"],
-                description=d.get("description"),
-                is_active=d.get("is_active", True)
-            )
-            db.add(db_duration)
-
-        db.commit()
-        return {"message": "Durées de licences créées avec succès"}
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@router.post("/create-state",response_model=schemas.Msg, status_code=201)
-async def create_state(
-    db: Session = Depends(dependencies.get_db),
-    admin_key: schemas.AdminKey = Body(...)
-):
-    check_user_access_key(admin_key)
-    try:
-        path = os.path.join(os.getcwd(), "app", "main", "templates", "default_data", "states.json")
-        with open(path, encoding='utf-8') as f:
-            states = json.load(f)
-            for s in states:
-                db_state = models.States(
-                    uuid=s["uuid"],
-                    code=s["code"],
-                    name=s["name"]
-                )
-                db.add(db_state)
-        db.commit()
-        return {"message": "Pays crées avec succès"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

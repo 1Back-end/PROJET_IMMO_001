@@ -110,3 +110,5 @@ def get_user_by_uuid(
     current_user: models.User = Depends(TokenRequired(roles=["SUPER_ADMIN","ADMIN"]))
 ):
     return crud.user.get_by_uuid(db=db,uuid=uuid)
+
+

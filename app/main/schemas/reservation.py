@@ -1,30 +1,40 @@
 from typing import Optional
-from app.main.schemas.user import AddedBy
 from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 
+from app.main.schemas import UserReservation, ProductResponseSlim1
+
+
 class Reservation(BaseModel):
-    product_uuid:list[str] = None
+    product_uuid : str
+    message : str
+    full_name : str
+    phone_number : str
+    address : str
 
 
 class ReservationCreate(Reservation):
     pass
 
 
-class ReservationUpdate(BaseModel):
-    product_uuid:Optional[list[str]] = None
-
 class ReservationResponse(BaseModel):
-    product_uuid:list[str] = None
-    user:AddedBy
+    uuid:str
+    message: str
+    status: str
+    user : UserReservation
+    product :ProductResponseSlim1
+    created_at: datetime
+    updated_at: Optional[datetime]
 
     model_config = ConfigDict(from_attributes=True)
+
+
 
 class ReservationResponseList(BaseModel):
     total: int
     pages: int
     per_page: int
-    current_page:int
-    data: list[Reservation]
+    current_page: int
+    data: list[ReservationResponse]
 
     model_config = ConfigDict(from_attributes=True)

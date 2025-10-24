@@ -13,8 +13,8 @@ class UserRole(str, Enum):
     ADMIN = "ADMIN"
     EDIMESTRE = "EDIMESTRE"
     SUPER_ADMIN = "SUPER_ADMIN"
-    OWNER = "OWNER"
     CUSTOMER = "CUSTOMER"
+    USER = "USER"
     
 
 class UserStatus(str, Enum):
@@ -56,7 +56,6 @@ class User(Base):
     deletion_code = Column(String, nullable=True)
     deletion_code_expires_at = Column(DateTime, nullable=True, default=None)
 
-    organisations = relationship("Organisation", back_populates="owner", uselist=False)
 
 
     def __repr__(self):

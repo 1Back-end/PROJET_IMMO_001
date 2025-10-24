@@ -6,8 +6,6 @@ from .user import *
 from .file import *
 from .adress import * 
 from .contry_with_city import *
-from .reservation import *
-from .products import *
-from .payments import *
-from .contrats import *
 from .customers import *
+from .products import *
+from .reservation import *
