@@ -23,6 +23,8 @@ class Payment(Base):
     is_total = Column(Boolean, nullable=False, default=False)
     status = Column(String, nullable=False, default=PaymentStatus.pending)
     user_uuid = Column(String, ForeignKey("users.uuid"), nullable=False, index=True)
+    product_uuid = Column(String, ForeignKey("products.uuid"), nullable=False, index=True)
+    product = relationship("Product", foreign_keys=[product_uuid])
 
     user = relationship("User", foreign_keys=[user_uuid])
     is_deleted = Column(Boolean, nullable=False, default=False)

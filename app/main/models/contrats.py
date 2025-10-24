@@ -34,5 +34,8 @@ class Contrats(Base):
 
     is_deleted = Column(Boolean, nullable=False, default=False)
 
+    added_by = Column(String, ForeignKey("users.uuid"), nullable=False, index=True)
+    creator =  relationship("User", foreign_keys=[added_by])
+
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())

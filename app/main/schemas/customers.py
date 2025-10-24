@@ -60,3 +60,8 @@ class CustomerResponseResponseList(BaseModel):
     data: list[CustomerResponse]
 
     model_config = ConfigDict(from_attributes=True)
+
+
+
+
+
