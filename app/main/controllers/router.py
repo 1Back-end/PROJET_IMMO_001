@@ -8,6 +8,8 @@ from .customers_controller import router as customers
 from .country_with_city_controller import router as country_with_citys
 from .product_controller import router as products
 from .reservation_controller import router as reservations
+from .contrats_controller import router as contrats
+from .payments_controller import router as payments
 api_router = APIRouter()
 
 api_router.include_router(migration)
@@ -18,3 +20,5 @@ api_router.include_router(country_with_citys)
 api_router.include_router(customers)
 api_router.include_router(products)
 api_router.include_router(reservations)
+api_router.include_router(contrats)
+api_router.include_router(payments)

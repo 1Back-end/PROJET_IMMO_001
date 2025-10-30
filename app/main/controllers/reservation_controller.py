@@ -88,7 +88,7 @@ async def update_status(
     )
     return schemas.Msg(message=__(key="reservation-update-successfully"))
 
-@router.get("/get_by_uuid", response_model=schemas.Msg)
+@router.get("/get_by_uuid", response_model=schemas.ReservationResponse)
 async def get_by_uuid(
         *,
         db: Session = Depends(get_db),

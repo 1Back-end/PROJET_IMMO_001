@@ -1,6 +1,6 @@
 from datetime import timedelta, datetime
-from typing import Any
-from fastapi import APIRouter, Depends, Body, HTTPException
+from typing import Any, Optional
+from fastapi import APIRouter, Depends, Body, HTTPException,Query
 from sqlalchemy.orm import Session
 from app.main.core.dependencies import get_db, TokenRequired
 from app.main import schemas, crud, models
@@ -14,23 +14,15 @@ router = APIRouter(prefix="/contrats", tags=["contrats"])
 async def create_contrat(
     *,
     db: Session = Depends(get_db),
-    obj_in:schemas.ContratCreate,
-    current_user: models.User = Depends(TokenRequired(roles=["SUPER_ADMIN","ADMIN"]))
+    obj_in:schemas.ContratsCreate,
+    current_user: models.User = Depends(TokenRequired(roles=["CUSTOMER"]))
 ):
-        
-    exist_uuid = crud.contrat.get_by_uuid(db=db,uuid=obj_in.uuid)
-    if exist_uuid:
-        raise HTTPException(status_code=409, detail=__(key="contrats-already-exist"))
     
-    exist_title = crud.contrats.get_by_title(db=db,title=obj_in.title)
-    if exist_title:
-        raise HTTPException(status_code=409, detail=__(key="contrats-already-exist"))
-    
-    product = crud.contrat.get_by_uuid(db=db,uuid=obj_in.product_uuid)
+    product = crud.products.get_by_uuid(db=db,uuid=obj_in.product_uuid)
     if not product:
         raise HTTPException(status_code=404, detail=__(key="product-not-found"))
     
-    crud.contrat.create(
+    crud.contrats.create(
         db=db,
         obj_in=obj_in,
         added_by=current_user.uuid
@@ -39,22 +31,17 @@ async def create_contrat(
 
 
 @router.put("/update",response_model=schemas.Msg,status_code=200)
-async def update_contrat(
+async def update_contrats(
     *,
     db: Session = Depends(get_db),
-    obj_in:schemas.ProductUpdate,
-     current_user: models.User = Depends(TokenRequired(roles=["SUPER_ADMIN","ADMIN"]))
+    obj_in:schemas.ContratUpdate,
+     current_user: models.User = Depends(TokenRequired(roles=["CUSTOMER"]))
 ):
+    product = crud.products.get_by_uuid(db=db,uuid=obj_in.product_uuid)
+    if not product:
+        raise HTTPException(status_code=404, detail=__(key="product-not-found"))
     
-    exist_uuid = crud.contrat.uuid(db=db,uuid=obj_in.uuid)
-    if exist_uuid:
-        raise HTTPException(status_code=409, detail=__(key="uuid-already-exist"))
-    
-    exist_title = crud.contrat.get_by_title(db=db,title=obj_in.title)
-    if exist_title:
-        raise HTTPException(status_code=409, detail=__(key="title-already-exist"))
-    
-    crud.contrat.update(
+    crud.contrats.update(
         db=db,
         obj_in=obj_in,
         added_by=current_user.uuid
@@ -66,25 +53,27 @@ async def update_contrat(
 async def update_contrat_status(
     *,
     db: Session = Depends(get_db),
-    obj_in:schemas.ContratUpdateStatus,
-    current_user: models.User = Depends(TokenRequired(roles=["SUPER_ADMIN","ADMIN"]))
+    obj_in:schemas.ContratsUpdateStatus,
+    current_user: models.User = Depends(TokenRequired(roles=["CUSTOMER"]))
 ):
-    crud.contrat.update_status(
+    if obj_in.status not in [models.ConntratsSatus.cancelled, models.ConntratsSatus.confirmed, models.ConntratsSatus.pending, models.ConntratsSatus.rejected, models.ConntratsSatus.requested]:
+        raise HTTPException(status_code=400, detail=__(key="invalid-status"))
+    crud.contrats.update_status(
         db=db,
         uuid=obj_in.uuid,
-        is_active=obj_in.is_active
+        status=obj_in.status
     )
     return schemas.Msg(message=__(key="contrat-update-successfully"))
 
 @router.delete("/delete",response_model=schemas.Msg,status_code=200)
-async def delete_product(
+async def delete_contrats(
     *,
     db: Session = Depends(get_db),
-    obj_in:schemas.ContratDelete,
-    current_user: models.User = Depends(TokenRequired(roles=["SUPER_ADMIN","ADMIN"]))
+    obj_in:schemas.ContratsDelete,
+    current_user: models.User = Depends(TokenRequired(roles=["CUSTOMER"]))
     
 ):
-    crud.contrat.delete(
+    crud.contrats.delete(
         db=db,
         uuid=obj_in.uuid
     )
@@ -92,26 +81,69 @@ async def delete_product(
 
 
 @router.put("/soft_delete",response_model=schemas.Msg,status_code=200)
-async def soft_delete_contrat(
+async def soft_delete_contrats(
     *,
     db: Session = Depends(get_db),
-    obj_in:schemas.ContratDelete,
-    current_user: models.User = Depends(TokenRequired(roles=["SUPER_ADMIN","ADMIN"]))
+    obj_in:schemas.ContratsDelete,
+    current_user: models.User = Depends(TokenRequired(roles=["CUSTOMER"]))
     
 ):
-    crud.contrat.soft_delete(db=db,uuid=obj_in.uuid)
+    crud.contrats.soft_delete(db=db,uuid=obj_in.uuid)
     return schemas.Msg(message=__(key="contrat-deleted-successfully"))
 
 @router.get("/get_many", response_model = None)
 async def get(
     *,
     db: Session = Depends(get_db),
-    page : int = 1,
-    per_page : int = 25,
-    current_user: models.User = Depends(TokenRequired(roles=["SUPER_ADMIN","ADMIN"]))
+    page: int = 1,
+    per_page: int = 30,
+    order: Optional[str] = Query(None, enum=["ASC", "DESC"]),
+    order_field: Optional[str] = None,
+    keyword: Optional[str] = None,
+    status: Optional[str] = Query(None, enum=[st.value for st in models.ConntratsSatus]),
+    current_user: models.User = Depends(TokenRequired(roles=["CUSTOMER"]))
 ):
-    return crud.product.get_many(
+    return crud.contrats.get_all_contrats(
         db=db,
         page=page,
-        per_page=per_page
+        per_page=per_page,
+        order=order,
+        order_field=order_field,
+        keyword=keyword,
+        status=status
     )
+
+@router.get("/get_my_contrat", response_model = None)
+async def get_my_contrat(
+    *,
+    db: Session = Depends(get_db),
+    page: int = 1,
+    per_page: int = 30,
+    order: Optional[str] = Query(None, enum=["ASC", "DESC"]),
+    order_field: Optional[str] = None,
+    keyword: Optional[str] = None,
+    status: Optional[str] = Query(None, enum=[st.value for st in models.ConntratsSatus]),
+    current_user: models.User = Depends(TokenRequired(roles=["CUSTOMER"]))
+):
+    return crud.contrats.get_contrats_by_added_by(
+        db=db,
+        page=page,
+        per_page=per_page,
+        order=order,
+        order_field=order_field,
+        keyword=keyword,
+        status=status,
+        added_by=current_user.uuid
+    )
+
+@router.get("/get_by_uuid", response_model=schemas.ContratsResponse)
+async def get_by_uuid(
+    *,
+    db: Session = Depends(get_db),
+    uuid: str,
+    current_user: models.User = Depends(TokenRequired(roles=["CUSTOMER"]))
+):
+    data = crud.contrats.get_by_uuid(db=db, uuid=uuid)
+    if not data:
+        raise HTTPException(status_code=404, detail=__("contrat-not-found"))
+    return data
