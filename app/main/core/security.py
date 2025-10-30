@@ -163,3 +163,14 @@ def generate_product_code(length: int = 8) -> str:
     alphabet = string.ascii_uppercase + string.digits
     code = ''.join(secrets.choice(alphabet) for _ in range(length))
     return f"P-{code}"
+
+
+
+def generate_payment_code(length: int = 12) -> str:
+    """
+    Génère un code unique pour les paiements.
+    Par défaut, 12 caractères alphanumériques.
+    """
+    alphabet = string.ascii_uppercase + string.digits
+    code = ''.join(secrets.choice(alphabet) for _ in range(length))
+    return f"PAYMENT-{code}"

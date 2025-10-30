@@ -1,39 +1,41 @@
 from typing import Optional
-from app.main.schemas.user import AddedBy
 from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 
-class Payment(BaseModel):
-    code:str
+from app.main.schemas import UserReservation, ProductResponseSlim1
+
+
+class PaymentsBase(BaseModel):
     month:str
     montant:str
-    is_total:bool
+    product_uuid:str
 
 
-class PaymentCreate(Payment):
+class PaymentsCreate(PaymentsBase):
     pass
 
 
-class PaymentUpdate(BaseModel):
-    code:Optional[str]
-    month:Optional[str]
-    montant:Optional[str]
-    is_total:Optional[bool] 
+class PaymentsDelete(BaseModel):
+    uuid:str
 
-class PaymentResponse(BaseModel):
-    code:str
+class PaymentsUpdateStatus(BaseModel):
+    uuid:str
+    status:str
+
+class PaymentsResponse(BaseModel):
+    uuid:str
     month:str
     montant:str
-    is_total:bool
-    user:AddedBy
+    status:str
+    product: ProductResponseSlim1
+    user:UserReservation
 
-model_config = ConfigDict(from_attributes=True)
 
-class PaymentResponseList(BaseModel):
+class PaymentsResponseList(BaseModel):
     total: int
     pages: int
     per_page: int
     current_page:int
-    data: list[Payment]
+    data: list[PaymentsResponse]
 
     model_config = ConfigDict(from_attributes=True)
