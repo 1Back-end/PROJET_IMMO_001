@@ -102,3 +102,66 @@ def send_start_reset_password(email_to: str, name: str, code: str) -> None:
 
 def send_account_confirmation_email():
     return None
+
+
+
+
+def send_code_validation(email_to: str, code: str,expirat_at:datetime,full_name:str) -> None:
+    try:
+        template_path = Path(Config.EMAIL_TEMPLATES_DIR) / "code_validation.html"
+        html_content = Template(template_path.read_text(encoding="utf-8")).render(
+            email_to=email_to,
+            code=code,
+            expirat_at=expirat_at.strftime("%d/%m/%Y à %H:%M"),
+            project_name=Config.PROJECT_NAME,
+            full_name = full_name
+        )
+        msg = MIMEMultipart()
+        msg["From"] = f"{Config.EMAILS_FROM_NAME} <{Config.EMAILS_FROM_EMAIL}>"
+        msg["To"] = email_to
+        msg["Subject"] = f"{Config.EMAILS_FROM_NAME} | Code de validation de votre compte"
+        msg.attach(MIMEText(html_content, "html"))
+
+        # Connexion et envoi
+        with smtplib.SMTP(Config.SMTP_HOST, Config.SMTP_PORT) as server:
+            if Config.SMTP_TLS:
+                server.starttls()
+            server.login(Config.SMTP_USER, Config.SMTP_PASSWORD)
+            server.send_message(msg)
+
+        logging.info(f"✅ Email envoyé à {email_to}")
+
+    except Exception as e:
+        logging.error(f"❌ Erreur lors de l'envoi de l'email : {e}")
+
+
+
+
+
+def send_owner_message_for_new_reservation(email_to: str, full_name:str,message:str,code) -> None:
+    try:
+        template_path = Path(Config.EMAIL_TEMPLATES_DIR) / "new_reservation.html"
+        html_content = Template(template_path.read_text(encoding="utf-8")).render(
+            email_to=email_to,
+            code=code,
+            full_name=full_name,
+            message=message,
+            project_name=Config.PROJECT_NAME,
+        )
+        msg = MIMEMultipart()
+        msg["From"] = f"{Config.EMAILS_FROM_NAME} <{Config.EMAILS_FROM_EMAIL}>"
+        msg["To"] = email_to
+        msg["Subject"] = f"{Config.EMAILS_FROM_NAME} | Nouvelle reservation"
+        msg.attach(MIMEText(html_content, "html"))
+
+        with smtplib.SMTP(Config.SMTP_HOST, Config.SMTP_PORT) as server:
+            if Config.SMTP_TLS:
+                server.starttls()
+            server.login(Config.SMTP_USER, Config.SMTP_PASSWORD)
+            server.send_message(msg)
+
+        logging.info(f"✅ Email envoyé à {email_to}")
+
+    except Exception as e:
+        logging.error(f"❌ Erreur lors de l'envoi de l'email : {e}")
+

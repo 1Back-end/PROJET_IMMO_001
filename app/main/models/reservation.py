@@ -18,12 +18,13 @@ class Reservation(Base):
     __tablename__ = 'reservations'
     uuid = Column(String, primary_key=True, unique=True)
 
-    user_uuid = Column(String, ForeignKey("users.uuid"), nullable=False, index=True)
+    user_uuid = Column(String, ForeignKey("users.uuid"), nullable=True, index=True)
     user = relationship("User", foreign_keys=[user_uuid])
 
     product_uuid = Column(String, ForeignKey("products.uuid"), nullable=False, index=True)
     product = relationship("Product", foreign_keys=[product_uuid])
 
+    message = Column(Text, nullable=True)
 
     status = Column(String, nullable=False, default=ReservationStatus.pending)
 

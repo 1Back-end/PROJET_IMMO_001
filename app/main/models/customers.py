@@ -28,7 +28,7 @@ class Customer(Base):
 
     uuid = Column(String, primary_key=True,index=True)
 
-    email = Column(String, index=True, nullable=False)
+    email = Column(String, index=True, nullable=True)
     phone_number = Column(String(20), nullable=False, default="", index=True)
     phone_number_2 = Column(String(20), nullable=True, default="", index=True)
 

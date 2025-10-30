@@ -1,4 +1,5 @@
 import re
+import secrets
 import string
 import random
 import jwt
@@ -151,3 +152,25 @@ def generate_license_key(groups: int = 4, chars_per_group: int = 5) -> str:
         for _ in range(groups)
     )
     return key
+
+
+
+def generate_product_code(length: int = 8) -> str:
+    """
+    Génère un code unique pour un produit.
+    Par défaut, 8 caractères alphanumériques.
+    """
+    alphabet = string.ascii_uppercase + string.digits
+    code = ''.join(secrets.choice(alphabet) for _ in range(length))
+    return f"P-{code}"
+
+
+
+def generate_payment_code(length: int = 12) -> str:
+    """
+    Génère un code unique pour les paiements.
+    Par défaut, 12 caractères alphanumériques.
+    """
+    alphabet = string.ascii_uppercase + string.digits
+    code = ''.join(secrets.choice(alphabet) for _ in range(length))
+    return f"PAYMENT-{code}"

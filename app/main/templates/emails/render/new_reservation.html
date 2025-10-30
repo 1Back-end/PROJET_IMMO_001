@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nouvelle réservation</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background-color: #f6f8fa;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    .container {
+      background: #ffffff;
+      max-width: 600px;
+      margin: 40px auto;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .header {
+      background-color: #1F4283;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .content {
+      padding: 25px;
+      line-height: 1.6;
+    }
+
+    .content p {
+      margin: 10px 0;
+    }
+
+    .code-box {
+      background-color: #f2f4f8;
+      border-left: 4px solid #1F4283;
+      padding: 10px 15px;
+      margin: 20px 0;
+      font-weight: bold;
+      font-size: 16px;
+      color: #1F4283;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 13px;
+      color: #777;
+      padding: 15px;
+      border-top: 1px solid #e5e5e5;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>{{ project_name }}</h1>
+    </div>
+
+    <div class="content">
+      <p>Bonjour <strong>{{ full_name }}</strong>,</p>
+
+      <p>Vous avez reçu une <strong>nouvelle réservation</strong> sur votre compte.</p>
+
+      <p><strong>Message du client :</strong></p>
+      <p>{{ message }}</p>
+
+      <div class="code-box">
+        Code du produit : {{ code }}
+      </div>
+
+      <p>
+        Pour plus de détails, veuillez consulter votre tableau de bord sur la
+        plateforme.
+      </p>
+
+      <p>Cordialement,<br />L’équipe <strong>{{ project_name }}</strong></p>
+    </div>
+
+    <div class="footer">
+      © {{ project_name }} - Tous droits réservés.<br />
+      Cet email a été envoyé à <strong>{{ email_to }}</strong>.
+    </div>
+  </div>
+</body>
+</html>

@@ -4,7 +4,6 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import ARRAY
 from app.main.models.db.base_class import Base
 
-
 class Country(Base):
     __tablename__ = "countries"
 
@@ -17,9 +16,8 @@ class Country(Base):
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
 
     # Relations
-    cities = relationship("City", back_populates="country", cascade="all, delete",passive_deletes=True)
-    organisations = relationship("Organisation", back_populates="country",cascade="all, delete",passive_deletes=True)
-
+    cities = relationship("City", back_populates="country")  # ici singularisé
+    customers = relationship("Customer", back_populates="country")  # <--- ajouté
 
 
 class City(Base):
@@ -37,6 +35,5 @@ class City(Base):
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
 
     # Relations
-    country = relationship("Country", back_populates="cities")
-    organisations = relationship("Organisation", back_populates="city")
-
+    country = relationship("Country", back_populates="cities")  # ici match avec cities
+    customers = relationship("Customer", back_populates="city")  # <--- ajouté

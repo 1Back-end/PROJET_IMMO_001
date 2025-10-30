@@ -4,6 +4,6 @@
 .\env\Scripts\python.exe -m uvicorn app.main:app --reload --port=9000
 
 
-
+StrongP@ssw0rd!
 
 
